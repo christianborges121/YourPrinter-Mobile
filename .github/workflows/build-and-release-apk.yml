@@ -23,7 +23,7 @@ concurrency:
 
 jobs:
   build:
-    name: Build & Publish APK
+    name: Build & Publish Single APK
     runs-on: ubuntu-latest
 
     steps:
@@ -31,6 +31,13 @@ jobs:
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
+      - name: Extract App Version
+        run: |
+          VERSION=$(grep '^version:' pubspec.yaml | awk '{print $2}' | cut -d'+' -f1)
+          echo "APP_VERSION=${VERSION}" >> $GITHUB_ENV
+          echo "APK_NAME=YourPrinter-v${VERSION}.apk" >> $GITHUB_ENV
+          echo "Building single APK for version: ${VERSION}"
 
       - name: Set up Java 17
         uses: actions/setup-java@v4
@@ -45,9 +52,6 @@ jobs:
           channel: 'stable'
           cache: true
 
-      - name: Verify Flutter Installation
-        run: flutter doctor -v
-
       - name: Get Dependencies
         run: flutter pub get
 
@@ -57,57 +61,37 @@ jobs:
       - name: Run Unit & Widget Tests
         run: flutter test
 
-      - name: Build Universal Release APK
+      - name: Build Single Universal Release APK
         run: flutter build apk --release
 
-      - name: Build Split Per-ABI Release APKs
-        run: flutter build apk --release --split-per-abi
-
-      - name: Prepare APK Artifacts
+      - name: Stage Versioned APK
         run: |
-          mkdir -p release-apks
-          # Universal APK
-          if [ -f build/app/outputs/flutter-apk/app-release.apk ]; then
-            cp build/app/outputs/flutter-apk/app-release.apk release-apks/YourPrinter-Mobile-universal-release.apk
-          fi
-          # Per-ABI APKs
-          if [ -f build/app/outputs/flutter-apk/app-arm64-v8a-release.apk ]; then
-            cp build/app/outputs/flutter-apk/app-arm64-v8a-release.apk release-apks/YourPrinter-Mobile-arm64-v8a-release.apk
-          fi
-          if [ -f build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk ]; then
-            cp build/app/outputs/flutter-apk/app-armeabi-v7a-release.apk release-apks/YourPrinter-Mobile-armeabi-v7a-release.apk
-          fi
-          if [ -f build/app/outputs/flutter-apk/app-x86_64-release.apk ]; then
-            cp build/app/outputs/flutter-apk/app-x86_64-release.apk release-apks/YourPrinter-Mobile-x86_64-release.apk
-          fi
-          ls -lh release-apks/
+          cp build/app/outputs/flutter-apk/app-release.apk ${{ env.APK_NAME }}
+          ls -lh ${{ env.APK_NAME }}
 
-      - name: Upload APKs to Workflow Artifacts
+      - name: Upload APK to Actions Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: YourPrinter-Mobile-APKs
-          path: release-apks/*.apk
+          name: ${{ env.APK_NAME }}
+          path: ${{ env.APK_NAME }}
           retention-days: 30
 
-      - name: Publish GitHub Release
+      - name: Publish Direct Unzipped APK to GitHub Release
         if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.create_release == true)
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'latest' }}
-          name: ${{ startsWith(github.ref, 'refs/tags/v') && format('YourPrinter Mobile {0}', github.ref_name) || 'YourPrinter Mobile (Latest Build)' }}
+          name: ${{ startsWith(github.ref, 'refs/tags/v') && format('YourPrinter Mobile {0}', github.ref_name) || format('YourPrinter Mobile v{0}', env.APP_VERSION) }}
           prerelease: ${{ !startsWith(github.ref, 'refs/tags/v') }}
-          files: release-apks/*.apk
+          files: ${{ env.APK_NAME }}
           body: |
-            ### 🚀 YourPrinter Mobile Automated Build
+            ### 🚀 YourPrinter Mobile v${{ env.APP_VERSION }}
 
-            - **Commit**: `${{ github.sha }}`
-            - **Branch/Tag**: `${{ github.ref_name }}`
-            - **Built on**: Ubuntu Latest (Flutter Stable, Java 17)
+            Single universal Android APK (no unzipping required):
+            - **Download:** [`${{ env.APK_NAME }}`](https://github.com/${{ github.repository }}/releases/download/${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'latest' }}/${{ env.APK_NAME }})
 
-            #### 📦 Included APKs
-            * **`YourPrinter-Mobile-arm64-v8a-release.apk`** *(Recommended)*: Optimized for modern Android smartphones (Galaxy S20-S25, Pixel 6-9, etc.) with smaller download size.
-            * **`YourPrinter-Mobile-universal-release.apk`**: All-in-one universal binary compatible with any Android 5.0+ architecture.
-            * **`YourPrinter-Mobile-armeabi-v7a-release.apk`**: 32-bit ARM compatibility for older hardware.
-            * **`YourPrinter-Mobile-x86_64-release.apk`**: For Android emulators and x86 ChromeOS devices.
+            - **Compatibility:** Universal binary (arm64, armeabi-v7a, x86_64) compatible with all modern and legacy Android devices.
+            - **Commit:** `${{ github.sha }}`
+            - **Branch/Tag:** `${{ github.ref_name }}`
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
