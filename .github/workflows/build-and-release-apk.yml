@@ -80,15 +80,16 @@ jobs:
         if: github.event_name == 'push' || (github.event_name == 'workflow_dispatch' && inputs.create_release == true)
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'latest' }}
+          tag_name: ${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('v{0}', env.APP_VERSION) }}
           name: ${{ startsWith(github.ref, 'refs/tags/v') && format('YourPrinter Mobile {0}', github.ref_name) || format('YourPrinter Mobile v{0}', env.APP_VERSION) }}
-          prerelease: ${{ !startsWith(github.ref, 'refs/tags/v') }}
+          prerelease: false
+          make_latest: true
           files: ${{ env.APK_NAME }}
           body: |
             ### 🚀 YourPrinter Mobile v${{ env.APP_VERSION }}
 
             Single universal Android APK (no unzipping required):
-            - **Download:** [`${{ env.APK_NAME }}`](https://github.com/${{ github.repository }}/releases/download/${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || 'latest' }}/${{ env.APK_NAME }})
+            - **Download APK:** [`${{ env.APK_NAME }}`](https://github.com/${{ github.repository }}/releases/download/${{ startsWith(github.ref, 'refs/tags/v') && github.ref_name || format('v{0}', env.APP_VERSION) }}/${{ env.APK_NAME }})
 
             - **Compatibility:** Universal binary (arm64, armeabi-v7a, x86_64) compatible with all modern and legacy Android devices.
             - **Commit:** `${{ github.sha }}`
