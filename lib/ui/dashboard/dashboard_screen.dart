@@ -263,7 +263,7 @@ class _DashboardScreenState extends ConsumerState<DashboardScreen> {
 
                   const Spacer(),
                   Text(
-                    'Swipe to cycle (${safeIndex + 1}/${contextState.contexts.length})',
+                    '${safeIndex + 1}/${contextState.contexts.length}',
                     style: const TextStyle(fontSize: 11, color: AppColors.textMuted, fontWeight: FontWeight.w500),
                   ),
                 ],
