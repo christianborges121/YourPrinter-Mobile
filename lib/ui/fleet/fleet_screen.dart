@@ -6,6 +6,7 @@ import '../../state/connection_provider.dart';
 import '../../state/fleet_provider.dart';
 import '../../state/printer_context_provider.dart';
 import '../common/not_configured_view.dart';
+import '../common/yourprinter_logo.dart';
 import 'fleet_printer_card.dart';
 
 class FleetScreen extends ConsumerWidget {
@@ -21,6 +22,8 @@ class FleetScreen extends ConsumerWidget {
       appBar: AppBar(
         title: Row(
           children: [
+            const YourPrinterLogo(size: 24),
+            const SizedBox(width: 10),
             const Text('Fleet Overview'),
             const SizedBox(width: 8),
             Container(

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/constants/app_colors.dart';
 import '../../state/auth_provider.dart';
+import '../common/yourprinter_logo.dart';
 
 class ServerLoginScreen extends ConsumerStatefulWidget {
   const ServerLoginScreen({super.key});
@@ -37,14 +38,7 @@ class _ServerLoginScreenState extends ConsumerState<ServerLoginScreen> {
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
-                    Container(
-                      padding: const EdgeInsets.all(16),
-                      decoration: const BoxDecoration(
-                        color: AppColors.accentGreenSubtle,
-                        shape: BoxShape.circle,
-                      ),
-                      child: const Icon(LucideIcons.printer, size: 36, color: AppColors.accentGreen),
-                    ),
+                    const YourPrinterLogo(size: 64),
                     const SizedBox(height: 16),
                     const Text(
                       'YourPrinter Mobile',

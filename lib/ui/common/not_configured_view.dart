@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/constants/app_colors.dart';
 import '../../state/connection_provider.dart';
 import 'connection_error_card.dart';
+import 'yourprinter_logo.dart';
 
 class NotConfiguredView extends ConsumerStatefulWidget {
   final VoidCallback? onOpenSettings;
@@ -84,20 +85,9 @@ class _NotConfiguredViewState extends ConsumerState<NotConfiguredView> {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
-              // Icon Badge
-              Center(
-                child: Container(
-                  width: 72,
-                  height: 72,
-                  decoration: BoxDecoration(
-                    color: AppColors.warning.withValues(alpha: 0.15),
-                    shape: BoxShape.circle,
-                    border: Border.all(color: AppColors.warning.withValues(alpha: 0.4), width: 2),
-                  ),
-                  child: const Center(
-                    child: Icon(LucideIcons.serverOff, size: 36, color: AppColors.warning),
-                  ),
-                ),
+              // Brand Logo Badge
+              const Center(
+                child: YourPrinterLogo(size: 68),
               ),
               const SizedBox(height: 16),
 

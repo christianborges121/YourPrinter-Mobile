@@ -6,6 +6,7 @@ import '../../state/auth_provider.dart';
 import '../../state/camera_provider.dart';
 import '../../state/connection_provider.dart';
 import '../common/connection_error_card.dart';
+import '../common/yourprinter_logo.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -149,13 +150,21 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
           const Card(
             child: Padding(
               padding: EdgeInsets.all(16),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+              child: Row(
                 children: [
-                  Text('YourPrinter Mobile v1.0.0', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
-                  SizedBox(height: 4),
-                  Text('Cross-platform 3D printing telemetry and camera client for YourPrinter and Bambu Lab printers.',
-                      style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                  YourPrinterLogo(size: 40),
+                  SizedBox(width: 14),
+                  Expanded(
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text('YourPrinter Mobile v1.0.0', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
+                        SizedBox(height: 4),
+                        Text('Cross-platform 3D printing telemetry and camera client for YourPrinter and Bambu Lab printers.',
+                            style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                      ],
+                    ),
+                  ),
                 ],
               ),
             ),

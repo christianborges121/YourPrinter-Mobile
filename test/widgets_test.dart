@@ -7,6 +7,7 @@ import 'package:yourprinter_mobile/state/auth_provider.dart';
 import 'package:yourprinter_mobile/ui/common/status_badge.dart';
 import 'package:yourprinter_mobile/ui/common/skeleton_shimmer.dart';
 import 'package:yourprinter_mobile/ui/common/connection_error_card.dart';
+import 'package:yourprinter_mobile/ui/common/yourprinter_logo.dart';
 import 'package:yourprinter_mobile/ui/dashboard/job_progress_card.dart';
 import 'package:yourprinter_mobile/state/telemetry_provider.dart';
 import 'package:yourprinter_mobile/models/printer_status.dart';
@@ -171,6 +172,21 @@ void main() {
 
       expect(find.text('View Technical Details'), findsOneWidget);
       expect(find.text(rawError), findsNothing);
+    });
+
+    testWidgets('YourPrinterLogo renders with custom dimensions and badge tile', (WidgetTester tester) async {
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: Center(
+              child: YourPrinterLogo(size: 64, showBadge: true),
+            ),
+          ),
+        ),
+      );
+
+      expect(find.byType(YourPrinterLogo), findsOneWidget);
+      expect(find.descendant(of: find.byType(YourPrinterLogo), matching: find.byType(CustomPaint)), findsOneWidget);
     });
   });
 }
