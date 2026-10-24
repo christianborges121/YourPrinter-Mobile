@@ -173,6 +173,11 @@ class _NotConfiguredViewState extends ConsumerState<NotConfiguredView> {
                         runSpacing: 4,
                         children: [
                           ActionChip(
+                            label: const Text('Port :3080', style: TextStyle(fontSize: 11)),
+                            onPressed: isBusy ? null : () => _applyPort(3080),
+                            backgroundColor: AppColors.surfaceSecondary,
+                          ),
+                          ActionChip(
                             label: const Text('Port :3000', style: TextStyle(fontSize: 11)),
                             onPressed: isBusy ? null : () => _applyPort(3000),
                             backgroundColor: AppColors.surfaceSecondary,
@@ -187,7 +192,7 @@ class _NotConfiguredViewState extends ConsumerState<NotConfiguredView> {
                             onPressed: isBusy
                                 ? null
                                 : () {
-                                    _urlController.text = 'http://192.168.1.50:3000';
+                                    _urlController.text = 'http://192.168.68.120:3080';
                                     setState(() {});
                                   },
                             backgroundColor: AppColors.surfaceSecondary,

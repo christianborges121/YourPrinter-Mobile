@@ -71,14 +71,71 @@ class _FleetPrinterCardState extends ConsumerState<FleetPrinterCard> {
 
     return Card(
       clipBehavior: Clip.antiAlias,
+      elevation: 2,
+      margin: EdgeInsets.zero,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(12),
+        side: const BorderSide(color: AppColors.border),
+      ),
       child: InkWell(
         onTap: widget.onTap,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Top Camera Box Stage
+            // 1. Prominent Top Header (Printer Name, Model, Status, Chevron)
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
+              child: Row(
+                children: [
+                  Container(
+                    width: 8,
+                    height: 8,
+                    decoration: BoxDecoration(
+                      color: isPrinting ? AppColors.accentGreen : (p.statusText.toLowerCase().contains('idle') ? AppColors.accentGreen : AppColors.textMuted),
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: Row(
+                      children: [
+                        Flexible(
+                          child: Text(
+                            p.name,
+                            style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 15, color: AppColors.textPrimary),
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+                          decoration: BoxDecoration(
+                            color: AppColors.surfaceSecondary,
+                            borderRadius: BorderRadius.circular(6),
+                            border: Border.all(color: AppColors.border),
+                          ),
+                          child: Text(
+                            p.model,
+                            style: const TextStyle(fontSize: 10, color: AppColors.textMuted),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  StatusBadge(
+                    statusText: p.statusText,
+                    isPrinting: isPrinting,
+                    isCompleted: isCompleted,
+                  ),
+                  const SizedBox(width: 6),
+                  const Icon(LucideIcons.chevronRight, size: 16, color: AppColors.textMuted),
+                ],
+              ),
+            ),
+
+            // 2. Widescreen 16:9 Camera Stage
             AspectRatio(
-              aspectRatio: 16 / 10,
+              aspectRatio: 16 / 9,
               child: Container(
                 color: Colors.black,
                 child: Stack(
@@ -106,20 +163,20 @@ class _FleetPrinterCardState extends ConsumerState<FleetPrinterCard> {
                     if (hasCameraError)
                       Container(
                         color: Colors.black.withValues(alpha: 0.9),
-                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
+                        padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                         child: Center(
                           child: SingleChildScrollView(
                             child: Column(
                               mainAxisSize: MainAxisSize.min,
                               children: [
-                                const Icon(LucideIcons.videoOff, size: 16, color: AppColors.warning),
-                                const SizedBox(height: 2),
+                                const Icon(LucideIcons.videoOff, size: 22, color: AppColors.warning),
+                                const SizedBox(height: 4),
                                 const Text(
                                   'Camera In Use / Offline',
                                   textAlign: TextAlign.center,
-                                  style: TextStyle(color: AppColors.warningLight, fontSize: 10, fontWeight: FontWeight.bold),
+                                  style: TextStyle(color: AppColors.warningLight, fontSize: 12, fontWeight: FontWeight.bold),
                                 ),
-                                const SizedBox(height: 1),
+                                const SizedBox(height: 2),
                                 Text(
                                   p.model.toLowerCase().contains('creator') || p.model.toLowerCase().contains('5m')
                                       ? 'May be open in Flash Studio or another app'
@@ -127,14 +184,14 @@ class _FleetPrinterCardState extends ConsumerState<FleetPrinterCard> {
                                   textAlign: TextAlign.center,
                                   maxLines: 2,
                                   overflow: TextOverflow.ellipsis,
-                                  style: const TextStyle(color: AppColors.textMuted, fontSize: 8),
+                                  style: const TextStyle(color: AppColors.textMuted, fontSize: 10),
                                 ),
-                                const SizedBox(height: 3),
+                                const SizedBox(height: 6),
                                 ElevatedButton(
                                   style: ElevatedButton.styleFrom(
                                     backgroundColor: AppColors.warning,
                                     foregroundColor: Colors.black,
-                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 4),
                                     minimumSize: Size.zero,
                                     tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                                   ),
@@ -142,7 +199,7 @@ class _FleetPrinterCardState extends ConsumerState<FleetPrinterCard> {
                                     ref.read(fleetProvider.notifier).clearCardCameraError(p.name);
                                     _cardCamera?.startStream(contextId: p.contextId);
                                   },
-                                  child: const Text('Retry', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
+                                  child: const Text('Retry', style: TextStyle(fontSize: 11, fontWeight: FontWeight.bold)),
                                 ),
                               ],
                             ),
@@ -153,110 +210,191 @@ class _FleetPrinterCardState extends ConsumerState<FleetPrinterCard> {
                     // Standby Overlay (Default on page open)
                     if (!_isPlaying && !hasCameraError)
                       Container(
-                        color: Colors.black.withValues(alpha: 0.8),
+                        color: Colors.black.withValues(alpha: 0.75),
                         child: Center(
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              const Icon(LucideIcons.video, size: 22, color: AppColors.accentGreen),
-                              const SizedBox(height: 6),
+                              Container(
+                                padding: const EdgeInsets.all(10),
+                                decoration: BoxDecoration(
+                                  color: AppColors.accentGreen.withValues(alpha: 0.15),
+                                  shape: BoxShape.circle,
+                                ),
+                                child: const Icon(LucideIcons.video, size: 26, color: AppColors.accentGreen),
+                              ),
+                              const SizedBox(height: 8),
                               ElevatedButton.icon(
                                 style: ElevatedButton.styleFrom(
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+                                  backgroundColor: AppColors.surfaceSecondary,
+                                  foregroundColor: AppColors.textPrimary,
+                                  side: const BorderSide(color: AppColors.border),
+                                  padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
                                   minimumSize: Size.zero,
                                 ),
                                 onPressed: _togglePlay,
-                                icon: const Icon(LucideIcons.play, size: 12),
-                                label: const Text('Watch Stream', style: TextStyle(fontSize: 11)),
+                                icon: const Icon(LucideIcons.play, size: 14, color: AppColors.accentGreen),
+                                label: const Text('Watch Live Feed', style: TextStyle(fontSize: 12, fontWeight: FontWeight.w600)),
                               ),
                             ],
                           ),
                         ),
                       ),
 
-                    // Play/Pause Floating Icon in corner when streaming
-                    if (_isPlaying && cardCameraState == CameraPlayState.streaming)
+                    // Live Badge in corner when streaming
+                    if (_isPlaying && cardCameraState == CameraPlayState.streaming) ...[
                       Positioned(
-                        top: 6,
-                        right: 6,
+                        top: 8,
+                        left: 8,
+                        child: Container(
+                          padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+                          decoration: BoxDecoration(
+                            color: Colors.black.withValues(alpha: 0.7),
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Container(
+                                width: 6,
+                                height: 6,
+                                decoration: const BoxDecoration(color: AppColors.accentGreen, shape: BoxShape.circle),
+                              ),
+                              const SizedBox(width: 5),
+                              const Text('LIVE', style: TextStyle(color: Colors.white, fontSize: 10, fontWeight: FontWeight.bold)),
+                            ],
+                          ),
+                        ),
+                      ),
+                      Positioned(
+                        top: 8,
+                        right: 8,
                         child: GestureDetector(
                           onTap: _togglePlay,
                           child: Container(
-                            padding: const EdgeInsets.all(4),
-                            decoration: BoxDecoration(color: Colors.black54, borderRadius: BorderRadius.circular(12)),
+                            padding: const EdgeInsets.all(6),
+                            decoration: BoxDecoration(color: Colors.black.withValues(alpha: 0.65), shape: BoxShape.circle),
                             child: const Icon(LucideIcons.pause, size: 14, color: Colors.white),
                           ),
                         ),
                       ),
+                    ],
                   ],
                 ),
               ),
             ),
 
-            // Card Body (Telemetry summary)
+            // 3. Telemetry & Job Section
             Padding(
-              padding: const EdgeInsets.all(10),
+              padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          p.name,
-                          style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 13, color: AppColors.textPrimary),
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      ),
-                      StatusBadge(
-                        statusText: p.statusText,
-                        isPrinting: isPrinting,
-                        isCompleted: isCompleted,
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 6),
                   if (p.jobName != null && p.jobName!.isNotEmpty) ...[
-                    Text(
-                      p.jobName!,
-                      style: const TextStyle(fontSize: 11, color: AppColors.textSecondary),
-                      maxLines: 1,
-                      overflow: TextOverflow.ellipsis,
+                    Row(
+                      children: [
+                        const Icon(LucideIcons.fileCode, size: 14, color: AppColors.accentGreen),
+                        const SizedBox(width: 6),
+                        Expanded(
+                          child: Text(
+                            p.jobName!,
+                            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.textPrimary),
+                            maxLines: 1,
+                            overflow: TextOverflow.ellipsis,
+                          ),
+                        ),
+                        const SizedBox(width: 8),
+                        Text(
+                          '${p.progress.toStringAsFixed(0)}%',
+                          style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold, color: AppColors.accentGreen),
+                        ),
+                      ],
                     ),
-                    const SizedBox(height: 6),
+                    const SizedBox(height: 8),
                     ClipRRect(
-                      borderRadius: BorderRadius.circular(3),
+                      borderRadius: BorderRadius.circular(4),
                       child: LinearProgressIndicator(
                         value: (p.progress / 100.0).clamp(0.0, 1.0),
-                        minHeight: 5,
+                        minHeight: 6,
                         backgroundColor: AppColors.border,
                         valueColor: AlwaysStoppedAnimation<Color>(
                           isCompleted ? AppColors.info : AppColors.accentGreen,
                         ),
                       ),
                     ),
-                    const SizedBox(height: 4),
+                    const SizedBox(height: 6),
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('${p.progress.toStringAsFixed(0)}%',
-                            style: const TextStyle(fontSize: 10, fontWeight: FontWeight.bold, color: AppColors.textPrimary)),
-                        Text('L ${p.currentLayer}/${p.totalLayers}',
-                            style: const TextStyle(fontSize: 10, color: AppColors.textMuted)),
+                        Text(
+                          'Layer ${p.currentLayer} of ${p.totalLayers}',
+                          style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
+                        ),
+                        Text(
+                          isPrinting ? 'Printing' : (isCompleted ? 'Finished' : 'Paused'),
+                          style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
+                        ),
                       ],
                     ),
+                    const SizedBox(height: 10),
                   ] else ...[
-                    const Text('Idle / No active job', style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                    const Row(
+                      children: [
+                        Icon(LucideIcons.checkCircle2, size: 14, color: AppColors.accentGreen),
+                        SizedBox(width: 6),
+                        Text('Ready · No active print job', style: TextStyle(fontSize: 12, color: AppColors.textMuted)),
+                      ],
+                    ),
+                    const SizedBox(height: 10),
                   ],
-                  const Divider(height: 12),
+
+                  // Temperature Badges & Quick Action
                   Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Nozzle: ${p.nozzleTemp.toStringAsFixed(0)}\u00B0C',
-                          style: const TextStyle(fontSize: 10, color: AppColors.toolheadT0)),
-                      Text('Bed: ${p.bedTemp.toStringAsFixed(0)}\u00B0C',
-                          style: const TextStyle(fontSize: 10, color: AppColors.bedHeat)),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceSecondary,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(LucideIcons.flame, size: 13, color: AppColors.toolheadT0),
+                            const SizedBox(width: 5),
+                            Text(
+                              'Nozzle: ${p.nozzleTemp.toStringAsFixed(0)}\u00B0C',
+                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.textPrimary),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const SizedBox(width: 8),
+                      Container(
+                        padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 4),
+                        decoration: BoxDecoration(
+                          color: AppColors.surfaceSecondary,
+                          borderRadius: BorderRadius.circular(6),
+                          border: Border.all(color: AppColors.border),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(LucideIcons.thermometer, size: 13, color: AppColors.bedHeat),
+                            const SizedBox(width: 5),
+                            Text(
+                              'Bed: ${p.bedTemp.toStringAsFixed(0)}\u00B0C',
+                              style: const TextStyle(fontSize: 11, fontWeight: FontWeight.w500, color: AppColors.textPrimary),
+                            ),
+                          ],
+                        ),
+                      ),
+                      const Spacer(),
+                      const Text(
+                        'Open Device ›',
+                        style: TextStyle(fontSize: 11, color: AppColors.accentGreen, fontWeight: FontWeight.w600),
+                      ),
                     ],
                   ),
                 ],

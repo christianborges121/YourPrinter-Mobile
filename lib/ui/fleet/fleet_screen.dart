@@ -78,15 +78,10 @@ class FleetScreen extends ConsumerWidget {
                   : RefreshIndicator(
                   color: AppColors.accentGreen,
                   onRefresh: () => ref.read(fleetProvider.notifier).fetchOverview(),
-                  child: GridView.builder(
-                    padding: const EdgeInsets.all(12),
-                    gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 10,
-                      mainAxisSpacing: 10,
-                      childAspectRatio: 0.68,
-                    ),
+                  child: ListView.separated(
+                    padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
                     itemCount: fleetState.printers.length,
+                    separatorBuilder: (context, index) => const SizedBox(height: 14),
                     itemBuilder: (context, index) {
                       final printer = fleetState.printers[index];
                       return FleetPrinterCard(
