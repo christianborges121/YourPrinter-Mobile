@@ -1,5 +1,5 @@
-name: flashforge_mobile
-description: FlashForgeUI mobile monitoring and control client for Android and iOS.
+name: yourprinter_mobile
+description: YourPrinter mobile monitoring and control client for Android and iOS.
 publish_to: 'none'
 version: 1.0.0+1
 

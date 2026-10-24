@@ -16,19 +16,19 @@ Future<void> main() async {
       overrides: [
         preferencesServiceProvider.overrideWithValue(prefsService),
       ],
-      child: const FlashForgeMobileApp(),
+      child: const YourPrinterMobileApp(),
     ),
   );
 }
 
-class FlashForgeMobileApp extends ConsumerStatefulWidget {
-  const FlashForgeMobileApp({super.key});
+class YourPrinterMobileApp extends ConsumerStatefulWidget {
+  const YourPrinterMobileApp({super.key});
 
   @override
-  ConsumerState<FlashForgeMobileApp> createState() => _FlashForgeMobileAppState();
+  ConsumerState<YourPrinterMobileApp> createState() => _YourPrinterMobileAppState();
 }
 
-class _FlashForgeMobileAppState extends ConsumerState<FlashForgeMobileApp> {
+class _YourPrinterMobileAppState extends ConsumerState<YourPrinterMobileApp> {
   @override
   void initState() {
     super.initState();

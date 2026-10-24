@@ -1,11 +1,11 @@
 import 'package:flutter_test/flutter_test.dart';
-import 'package:flashforge_mobile/models/auth_models.dart';
-import 'package:flashforge_mobile/models/camera_config.dart';
-import 'package:flashforge_mobile/models/job_file.dart';
-import 'package:flashforge_mobile/models/material_station.dart';
-import 'package:flashforge_mobile/models/printer_context.dart';
-import 'package:flashforge_mobile/models/printer_features.dart';
-import 'package:flashforge_mobile/models/printer_status.dart';
+import 'package:yourprinter_mobile/models/auth_models.dart';
+import 'package:yourprinter_mobile/models/camera_config.dart';
+import 'package:yourprinter_mobile/models/job_file.dart';
+import 'package:yourprinter_mobile/models/material_station.dart';
+import 'package:yourprinter_mobile/models/printer_context.dart';
+import 'package:yourprinter_mobile/models/printer_features.dart';
+import 'package:yourprinter_mobile/models/printer_status.dart';
 
 void main() {
   group('Models Serialization Tests', () {
@@ -84,7 +84,7 @@ void main() {
       final json = {
         'success': true,
         'wsUrl': '/api/go2rtc/api/ws?src=printer_context_1',
-        'concurrencyNotice': 'FlashForge printers only support one active camera stream at a time.',
+        'concurrencyNotice': 'YourPrinter devices only support one active camera stream at a time.',
       };
 
       final config = CameraProxyConfigResponse.fromJson(json);
@@ -141,7 +141,7 @@ void main() {
       final contextJson = {
         'contextId': 'ctx-creator-5',
         'name': 'Creator 5 Pro',
-        'model': 'FlashForge Creator 5',
+        'model': 'YourPrinter Creator 5',
         'isConnected': true,
         'isSelected': true,
         'printerDetails': {

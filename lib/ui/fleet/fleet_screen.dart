@@ -54,7 +54,7 @@ class FleetScreen extends ConsumerWidget {
                       SizedBox(height: 12),
                       Text('No printers detected', style: TextStyle(color: AppColors.textPrimary, fontSize: 16)),
                       SizedBox(height: 4),
-                      Text('Add printers in FlashForgeUI server settings', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
+                      Text('Add printers in YourPrinter server settings', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
                     ],
                   ),
                 )

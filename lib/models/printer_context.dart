@@ -99,7 +99,7 @@ class FleetOverviewPrinter {
     final status = json['status'] as Map<String, dynamic>? ?? {};
     return FleetOverviewPrinter(
       name: json['name'] as String? ?? 'Printer',
-      model: json['model'] as String? ?? 'FlashForge',
+      model: json['model'] as String? ?? 'YourPrinter',
       contextId: json['contextId'] as String?,
       isConnected: json['isConnected'] as bool? ?? false,
       hasCamera: json['hasCamera'] as bool? ?? false,

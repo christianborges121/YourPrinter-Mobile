@@ -13,7 +13,7 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>flashforge_mobile</string>
+	<string>yourprinter_mobile</string>
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
@@ -53,7 +53,7 @@
 		<true/>
 	</dict>
 	<key>NSLocalNetworkUsageDescription</key>
-	<string>YourPrinter connects to your FlashForgeUI server and 3D printers on your local network.</string>
+	<string>YourPrinter connects to your YourPrinter server and 3D printers on your local network.</string>
 	<key>NSCameraUsageDescription</key>
 	<string>YourPrinter requires camera permission for WebRTC video playback.</string>
 	<key>NSMicrophoneUsageDescription</key>

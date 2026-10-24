@@ -1,4 +1,4 @@
-package com.christianborges.flashforge_mobile
+package com.christianborges.yourprinter_mobile
 
 import io.flutter.embedding.android.FlutterActivity
 

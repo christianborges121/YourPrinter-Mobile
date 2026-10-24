@@ -52,7 +52,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     children: [
                       Icon(LucideIcons.server, size: 16, color: AppColors.accentGreen),
                       SizedBox(width: 8),
-                      Text('FlashForgeUI Server', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
+                      Text('YourPrinter Server', style: TextStyle(fontSize: 14, fontWeight: FontWeight.bold)),
                     ],
                   ),
                   const SizedBox(height: 12),
@@ -139,7 +139,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                 children: [
                   Text('YourPrinter Mobile v1.0.0', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 13)),
                   SizedBox(height: 4),
-                  Text('Cross-platform 3D printing telemetry and camera client for FlashForge and Bambu Lab printers.',
+                  Text('Cross-platform 3D printing telemetry and camera client for YourPrinter and Bambu Lab printers.',
                       style: TextStyle(fontSize: 11, color: AppColors.textMuted)),
                 ],
               ),

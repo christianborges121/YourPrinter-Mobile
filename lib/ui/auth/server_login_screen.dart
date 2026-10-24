@@ -47,7 +47,7 @@ class _ServerLoginScreenState extends ConsumerState<ServerLoginScreen> {
                     ),
                     const SizedBox(height: 16),
                     const Text(
-                      'FlashForgeUI Mobile',
+                      'YourPrinter Mobile',
                       style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
                     ),
                     const SizedBox(height: 4),

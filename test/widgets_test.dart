@@ -2,13 +2,13 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-import 'package:flashforge_mobile/services/preferences_service.dart';
-import 'package:flashforge_mobile/state/auth_provider.dart';
-import 'package:flashforge_mobile/ui/common/status_badge.dart';
-import 'package:flashforge_mobile/ui/common/skeleton_shimmer.dart';
-import 'package:flashforge_mobile/ui/dashboard/job_progress_card.dart';
-import 'package:flashforge_mobile/state/telemetry_provider.dart';
-import 'package:flashforge_mobile/models/printer_status.dart';
+import 'package:yourprinter_mobile/services/preferences_service.dart';
+import 'package:yourprinter_mobile/state/auth_provider.dart';
+import 'package:yourprinter_mobile/ui/common/status_badge.dart';
+import 'package:yourprinter_mobile/ui/common/skeleton_shimmer.dart';
+import 'package:yourprinter_mobile/ui/dashboard/job_progress_card.dart';
+import 'package:yourprinter_mobile/state/telemetry_provider.dart';
+import 'package:yourprinter_mobile/models/printer_status.dart';
 
 class TestTelemetryNotifier extends StateNotifier<TelemetryState> implements TelemetryNotifier {
   TestTelemetryNotifier([super.state = const TelemetryState(isLoading: true)]);

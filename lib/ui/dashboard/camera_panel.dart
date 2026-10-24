@@ -163,7 +163,7 @@ class CameraPanel extends ConsumerWidget {
             const SizedBox(height: 6),
             Text(
               service.concurrencyNotice ??
-                  'The camera feed may currently be open in another application (such as Flash Studio, FlashPrint, or another browser window). FlashForge printers only support one active video stream.',
+                  'The camera feed may currently be open in another application (such as Flash Studio, FlashPrint, or another browser window). YourPrinter devices only support one active video stream.',
               textAlign: TextAlign.center,
               style: const TextStyle(color: AppColors.textMuted, fontSize: 11, height: 1.4),
             ),
