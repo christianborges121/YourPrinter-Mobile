@@ -114,7 +114,7 @@ class _FilesScreenState extends ConsumerState<FilesScreen> with SingleTickerProv
             subtitle: Row(
               children: [
                 if (file.printTime != null)
-                  Text('${(file.printTime! ~/ 60)} min Â· ', style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
+                  Text('${(file.printTime! ~/ 60)} min \u00B7 ', style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
                 if (file.filamentWeight != null)
                   Text('${file.filamentWeight!.toStringAsFixed(1)}g', style: const TextStyle(fontSize: 11, color: AppColors.textMuted)),
               ],

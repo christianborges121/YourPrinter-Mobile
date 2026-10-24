@@ -74,7 +74,7 @@ class AmsSpoolCard extends ConsumerWidget {
                           overflow: TextOverflow.ellipsis,
                         ),
                         Text(
-                          '${activeSpool.material ?? 'PLA'} Â· ${activeSpool.remainingWeight.toStringAsFixed(0)}g left',
+                          '${activeSpool.material ?? 'PLA'} \u00B7 ${activeSpool.remainingWeight.toStringAsFixed(0)}g left',
                           style: const TextStyle(fontSize: 11, color: AppColors.textMuted),
                         ),
                       ],

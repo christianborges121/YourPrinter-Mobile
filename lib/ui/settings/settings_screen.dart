@@ -4,6 +4,7 @@ import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/constants/app_colors.dart';
 import '../../state/auth_provider.dart';
 import '../../state/camera_provider.dart';
+import '../../state/connection_provider.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -60,7 +61,7 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                     controller: _urlController,
                     decoration: InputDecoration(
                       labelText: 'Server Base URL',
-                      hintText: 'http://192.168.1.50:8080',
+                      hintText: 'http://192.168.68.105:3000',
                       border: OutlineInputBorder(borderRadius: BorderRadius.circular(8)),
                     ),
                   ),
@@ -71,10 +72,13 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         onPressed: () async {
                           final newUrl = _urlController.text.trim();
                           if (newUrl.isNotEmpty) {
-                            await ref.read(authProvider.notifier).updateServerUrl(newUrl);
+                            final res = await ref.read(connectionProvider.notifier).testAndSaveServerUrl(newUrl);
                             if (context.mounted) {
                               ScaffoldMessenger.of(context).showSnackBar(
-                                const SnackBar(content: Text('Server URL updated! Reconnecting...')),
+                                SnackBar(
+                                  content: Text(res.message),
+                                  backgroundColor: res.success ? AppColors.accentGreen : AppColors.error,
+                                ),
                               );
                             }
                           }

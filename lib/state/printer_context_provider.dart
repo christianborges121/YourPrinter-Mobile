@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/printer_context.dart';
 import 'auth_provider.dart';
 import 'camera_provider.dart';
+import 'connection_provider.dart';
 import 'telemetry_provider.dart';
 
 class PrinterContextState {
@@ -69,11 +70,16 @@ class PrinterContextNotifier extends StateNotifier<PrinterContextState> {
         activeContextId: activeId,
       );
 
+      _ref.read(connectionProvider.notifier).markConnected();
+
       if (activeId != null) {
         await _ref.read(telemetryProvider.notifier).fetchStatus(contextId: activeId);
       }
     } catch (e) {
       state = state.copyWith(isLoading: false, error: e.toString());
+      if (state.contexts.isEmpty) {
+        _ref.read(connectionProvider.notifier).markUnreachable(e.toString());
+      }
     }
   }
 

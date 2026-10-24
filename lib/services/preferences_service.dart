@@ -20,7 +20,11 @@ class PreferencesService {
     return PreferencesService(prefs);
   }
 
-  String getServerUrl({String defaultValue = 'http://192.168.1.50:8080'}) {
+  bool hasCustomServerUrl() {
+    return _prefs.containsKey(_keyServerUrl) || _prefs.containsKey(_legacyKeyServerUrl);
+  }
+
+  String getServerUrl({String defaultValue = 'http://192.168.1.50:3000'}) {
     return _prefs.getString(_keyServerUrl) ?? _prefs.getString(_legacyKeyServerUrl) ?? defaultValue;
   }
 

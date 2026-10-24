@@ -182,11 +182,11 @@ class TemperatureCard extends ConsumerWidget {
                 decoration: const BoxDecoration(color: AppColors.bedHeat, shape: BoxShape.circle),
               ),
             Text(
-              '${currentTemp.toStringAsFixed(0)}Â°C',
+              '${currentTemp.toStringAsFixed(0)}\u00B0C',
               style: const TextStyle(fontSize: 14, fontWeight: FontWeight.bold, color: AppColors.textPrimary),
             ),
             Text(
-              ' / ${targetTemp.toStringAsFixed(0)}Â°C',
+              ' / ${targetTemp.toStringAsFixed(0)}\u00B0C',
               style: const TextStyle(fontSize: 12, color: AppColors.textMuted),
             ),
             if (onTap != null) ...[

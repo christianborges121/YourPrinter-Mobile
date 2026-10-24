@@ -2,8 +2,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/constants/app_colors.dart';
+import '../../state/connection_provider.dart';
 import '../../state/fleet_provider.dart';
 import '../../state/printer_context_provider.dart';
+import '../common/not_configured_view.dart';
 import 'fleet_printer_card.dart';
 
 class FleetScreen extends ConsumerWidget {
@@ -45,20 +47,35 @@ class FleetScreen extends ConsumerWidget {
       ),
       body: fleetState.isLoading && fleetState.printers.isEmpty
           ? const Center(child: CircularProgressIndicator(color: AppColors.accentGreen))
-          : fleetState.printers.isEmpty
-              ? const Center(
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Icon(LucideIcons.printer, size: 48, color: AppColors.textMuted),
-                      SizedBox(height: 12),
-                      Text('No printers detected', style: TextStyle(color: AppColors.textPrimary, fontSize: 16)),
-                      SizedBox(height: 4),
-                      Text('Add printers in YourPrinter server settings', style: TextStyle(color: AppColors.textMuted, fontSize: 12)),
-                    ],
-                  ),
-                )
-              : RefreshIndicator(
+          : ref.watch(connectionProvider).status == ServerConnectionStatus.unreachable
+              ? NotConfiguredView(onOpenSettings: () => onTabSelected(3))
+              : fleetState.printers.isEmpty
+                  ? Center(
+                      child: Padding(
+                        padding: const EdgeInsets.all(24),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            const Icon(LucideIcons.printer, size: 48, color: AppColors.textMuted),
+                            const SizedBox(height: 12),
+                            const Text('No Printers Added Yet', style: TextStyle(color: AppColors.textPrimary, fontSize: 16, fontWeight: FontWeight.bold)),
+                            const SizedBox(height: 6),
+                            const Text(
+                              'Connected to YourPrinter server, but no active printers were found. Add your printer in the YourPrinter desktop application.',
+                              textAlign: TextAlign.center,
+                              style: TextStyle(color: AppColors.textMuted, fontSize: 12),
+                            ),
+                            const SizedBox(height: 16),
+                            OutlinedButton.icon(
+                              onPressed: () => ref.read(fleetProvider.notifier).fetchOverview(),
+                              icon: const Icon(LucideIcons.refreshCw, size: 14),
+                              label: const Text('Refresh Fleet'),
+                            ),
+                          ],
+                        ),
+                      ),
+                    )
+                  : RefreshIndicator(
                   color: AppColors.accentGreen,
                   onRefresh: () => ref.read(fleetProvider.notifier).fetchOverview(),
                   child: GridView.builder(

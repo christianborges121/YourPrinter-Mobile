@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/printer_context.dart';
 import 'auth_provider.dart';
+import 'connection_provider.dart';
 
 class FleetState {
   final bool isLoading;
@@ -52,9 +53,13 @@ class FleetNotifier extends StateNotifier<FleetState> {
       final printerService = _ref.read(printerServiceProvider);
       final printers = await printerService.getFleetOverview();
       state = state.copyWith(isLoading: false, printers: printers);
+      _ref.read(connectionProvider.notifier).markConnected();
     } catch (e) {
       if (!silent) {
         state = state.copyWith(isLoading: false, error: e.toString());
+      }
+      if (state.printers.isEmpty) {
+        _ref.read(connectionProvider.notifier).markUnreachable(e.toString());
       }
     }
   }

@@ -3,6 +3,8 @@ import '../core/network/api_client.dart';
 import '../core/network/websocket_client.dart';
 import '../services/preferences_service.dart';
 import '../services/printer_service.dart';
+import 'fleet_provider.dart';
+import 'printer_context_provider.dart';
 
 final preferencesServiceProvider = Provider<PreferencesService>((ref) {
   throw UnimplementedError('Initialize preferencesServiceProvider in main');
@@ -117,6 +119,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
     apiClient.updateConfig(baseUrl: newUrl, authToken: prefs.getAuthToken());
 
     await checkAuthStatus();
+    await _ref.read(printerContextProvider.notifier).fetchContexts();
+    await _ref.read(fleetProvider.notifier).fetchOverview();
   }
 
   Future<void> logout() async {

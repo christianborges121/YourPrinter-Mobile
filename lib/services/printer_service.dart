@@ -12,6 +12,21 @@ class PrinterService {
 
   PrinterService({required this.apiClient});
 
+  // Health / Connection Check
+  Future<bool> checkConnection() async {
+    try {
+      final res = await apiClient.get(ApiEndpoints.authStatus);
+      return res.statusCode != null && res.statusCode! >= 200 && res.statusCode! < 400;
+    } catch (_) {
+      try {
+        final res = await apiClient.get(ApiEndpoints.contexts);
+        return res.statusCode != null && res.statusCode! >= 200 && res.statusCode! < 400;
+      } catch (_) {
+        return false;
+      }
+    }
+  }
+
   // Auth
   Future<WebUIAuthStatus> getAuthStatus() async {
     final res = await apiClient.get(ApiEndpoints.authStatus);

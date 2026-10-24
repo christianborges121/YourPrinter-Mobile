@@ -43,22 +43,22 @@ class ApiClient {
   }
 
   String buildWebSocketUrl(String relativePath) {
-    final uri = Uri.parse(_baseUrl);
-    final isHttps = uri.scheme == 'https';
+    final baseUri = Uri.parse(_baseUrl);
+    final isHttps = baseUri.scheme == 'https';
     final wsScheme = isHttps ? 'wss' : 'ws';
-    final path = relativePath.startsWith('/') ? relativePath : '/$relativePath';
 
-    final queryParams = <String, String>{};
+    final relUri = Uri.parse(relativePath.startsWith('/') ? relativePath : '/$relativePath');
+    final mergedQueryParams = Map<String, dynamic>.from(relUri.queryParameters);
     if (_authToken != null && _authToken!.isNotEmpty) {
-      queryParams['token'] = _authToken!;
+      mergedQueryParams['token'] = _authToken!;
     }
 
     final wsUri = Uri(
       scheme: wsScheme,
-      host: uri.host,
-      port: uri.hasPort ? uri.port : null,
-      path: path,
-      queryParameters: queryParams.isNotEmpty ? queryParams : null,
+      host: baseUri.host,
+      port: baseUri.hasPort ? baseUri.port : null,
+      path: relUri.path,
+      queryParameters: mergedQueryParams.isNotEmpty ? mergedQueryParams : null,
     );
 
     return wsUri.toString();

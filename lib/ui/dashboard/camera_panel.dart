@@ -57,12 +57,20 @@ class CameraPanel extends ConsumerWidget {
               color: Colors.black,
               child: Stack(
                 children: [
-                  // Video Surface
+                  // Video / MJPEG Surface
                   if (cameraService.state == CameraPlayState.streaming)
-                    RTCVideoView(
-                      cameraService.renderer,
-                      objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
-                    ),
+                    cameraService.lastJpegBytes != null
+                        ? Image.memory(
+                            cameraService.lastJpegBytes!,
+                            gaplessPlayback: true,
+                            fit: BoxFit.contain,
+                            width: double.infinity,
+                            height: double.infinity,
+                          )
+                        : RTCVideoView(
+                            cameraService.renderer,
+                            objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
+                          ),
 
                   // Connecting Spinner State
                   if (cameraService.state == CameraPlayState.connecting)
@@ -125,7 +133,7 @@ class CameraPanel extends ConsumerWidget {
           ),
           const SizedBox(width: 6),
           Text(
-            service.continuousOverride ? 'Continuous' : 'Live Â· ${service.remainingSeconds}s',
+            service.continuousOverride ? 'Continuous' : 'Live \u00B7 ${service.remainingSeconds}s',
             style: const TextStyle(color: Colors.white, fontSize: 11, fontWeight: FontWeight.w600),
           ),
           const SizedBox(width: 8),

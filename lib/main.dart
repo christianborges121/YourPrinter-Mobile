@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'core/theme/app_theme.dart';
 import 'services/preferences_service.dart';
 import 'state/auth_provider.dart';
+import 'state/connection_provider.dart';
 import 'state/printer_context_provider.dart';
 import 'ui/auth/server_login_screen.dart';
 import 'ui/common/app_scaffold.dart';
@@ -32,8 +33,9 @@ class _YourPrinterMobileAppState extends ConsumerState<YourPrinterMobileApp> {
   @override
   void initState() {
     super.initState();
-    // Initialize Auth & Contexts
+    // Initialize Connection, Auth & Contexts
     WidgetsBinding.instance.addPostFrameCallback((_) async {
+      await ref.read(connectionProvider.notifier).checkCurrentConnection(silent: true);
       await ref.read(authProvider.notifier).checkAuthStatus();
       await ref.read(printerContextProvider.notifier).fetchContexts();
     });

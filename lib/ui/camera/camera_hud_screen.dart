@@ -50,13 +50,21 @@ class _CameraHudScreenState extends ConsumerState<CameraHudScreen> {
       backgroundColor: Colors.black,
       body: Stack(
         children: [
-          // Fullscreen WebRTC Video Stage
+          // Fullscreen WebRTC / MJPEG Video Stage
           Positioned.fill(
             child: cameraService.state == CameraPlayState.streaming
-                ? RTCVideoView(
-                    cameraService.renderer,
-                    objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
-                  )
+                ? (cameraService.lastJpegBytes != null
+                    ? Image.memory(
+                        cameraService.lastJpegBytes!,
+                        gaplessPlayback: true,
+                        fit: BoxFit.contain,
+                        width: double.infinity,
+                        height: double.infinity,
+                      )
+                    : RTCVideoView(
+                        cameraService.renderer,
+                        objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
+                      ))
                 : const Center(
                     child: CircularProgressIndicator(color: AppColors.accentGreen),
                   ),
@@ -154,10 +162,10 @@ class _CameraHudScreenState extends ConsumerState<CameraHudScreen> {
                         Text('Layer ${status.currentLayer}/${status.totalLayers}',
                             style: const TextStyle(color: Colors.white70, fontSize: 11)),
                         const SizedBox(width: 12),
-                        Text('Nozzle: ${status.nozzleTemperature.toStringAsFixed(0)}Â°C',
+                        Text('Nozzle: ${status.nozzleTemperature.toStringAsFixed(0)}\u00B0C',
                             style: const TextStyle(color: AppColors.toolheadT0, fontSize: 11)),
                         const SizedBox(width: 8),
-                        Text('Bed: ${status.bedTemperature.toStringAsFixed(0)}Â°C',
+                        Text('Bed: ${status.bedTemperature.toStringAsFixed(0)}\u00B0C',
                             style: const TextStyle(color: AppColors.bedHeat, fontSize: 11)),
                       ],
                     ),

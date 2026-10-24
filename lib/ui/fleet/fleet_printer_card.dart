@@ -27,8 +27,13 @@ class _FleetPrinterCardState extends ConsumerState<FleetPrinterCard> {
   CameraStreamService? _cardCamera;
   bool _isPlaying = false;
 
+  void _onCameraChanged() {
+    if (mounted) setState(() {});
+  }
+
   @override
   void dispose() {
+    _cardCamera?.removeListener(_onCameraChanged);
     _cardCamera?.dispose();
     super.dispose();
   }
@@ -41,9 +46,12 @@ class _FleetPrinterCardState extends ConsumerState<FleetPrinterCard> {
       if (_cardCamera == null) {
         final apiClient = ref.read(apiClientProvider);
         _cardCamera = CameraStreamService(apiClient: apiClient);
+        _cardCamera!.addListener(_onCameraChanged);
         _cardCamera!.initRenderer().then((_) {
-          _cardCamera!.startStream(contextId: widget.printer.contextId);
-          setState(() => _isPlaying = true);
+          if (mounted) {
+            _cardCamera!.startStream(contextId: widget.printer.contextId);
+            setState(() => _isPlaying = true);
+          }
         });
       } else {
         _cardCamera!.startStream(contextId: widget.printer.contextId);
@@ -75,12 +83,20 @@ class _FleetPrinterCardState extends ConsumerState<FleetPrinterCard> {
                 color: Colors.black,
                 child: Stack(
                   children: [
-                    // Video View
+                    // Video / MJPEG View
                     if (_isPlaying && cardCameraState == CameraPlayState.streaming && _cardCamera != null)
-                      RTCVideoView(
-                        _cardCamera!.renderer,
-                        objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
-                      ),
+                      _cardCamera!.lastJpegBytes != null
+                          ? Image.memory(
+                              _cardCamera!.lastJpegBytes!,
+                              gaplessPlayback: true,
+                              fit: BoxFit.contain,
+                              width: double.infinity,
+                              height: double.infinity,
+                            )
+                          : RTCVideoView(
+                              _cardCamera!.renderer,
+                              objectFit: RTCVideoViewObjectFit.RTCVideoViewObjectFitContain,
+                            ),
 
                     // Connecting Spinner
                     if (_isPlaying && cardCameraState == CameraPlayState.connecting)
@@ -90,38 +106,46 @@ class _FleetPrinterCardState extends ConsumerState<FleetPrinterCard> {
                     if (hasCameraError)
                       Container(
                         color: Colors.black.withValues(alpha: 0.9),
-                        padding: const EdgeInsets.all(8),
+                        padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 4),
                         child: Center(
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              const Icon(LucideIcons.videoOff, size: 20, color: AppColors.warning),
-                              const SizedBox(height: 4),
-                              const Text('Camera In Use / Offline',
-                                  style: TextStyle(color: AppColors.warningLight, fontSize: 11, fontWeight: FontWeight.bold)),
-                              const SizedBox(height: 2),
-                              Text(
-                                p.model.toLowerCase().contains('creator') || p.model.toLowerCase().contains('5m')
-                                    ? 'May be open in Flash Studio or another app'
-                                    : 'May be open in another viewer',
-                                textAlign: TextAlign.center,
-                                style: const TextStyle(color: AppColors.textMuted, fontSize: 9),
-                              ),
-                              const SizedBox(height: 6),
-                              ElevatedButton(
-                                style: ElevatedButton.styleFrom(
-                                  backgroundColor: AppColors.warning,
-                                  foregroundColor: Colors.black,
-                                  padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
-                                  minimumSize: Size.zero,
+                          child: SingleChildScrollView(
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                const Icon(LucideIcons.videoOff, size: 16, color: AppColors.warning),
+                                const SizedBox(height: 2),
+                                const Text(
+                                  'Camera In Use / Offline',
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(color: AppColors.warningLight, fontSize: 10, fontWeight: FontWeight.bold),
                                 ),
-                                onPressed: () {
-                                  ref.read(fleetProvider.notifier).clearCardCameraError(p.name);
-                                  _cardCamera?.startStream(contextId: p.contextId);
-                                },
-                                child: const Text('Retry', style: TextStyle(fontSize: 10, fontWeight: FontWeight.bold)),
-                              ),
-                            ],
+                                const SizedBox(height: 1),
+                                Text(
+                                  p.model.toLowerCase().contains('creator') || p.model.toLowerCase().contains('5m')
+                                      ? 'May be open in Flash Studio or another app'
+                                      : 'May be open in another viewer',
+                                  textAlign: TextAlign.center,
+                                  maxLines: 2,
+                                  overflow: TextOverflow.ellipsis,
+                                  style: const TextStyle(color: AppColors.textMuted, fontSize: 8),
+                                ),
+                                const SizedBox(height: 3),
+                                ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: AppColors.warning,
+                                    foregroundColor: Colors.black,
+                                    padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 2),
+                                    minimumSize: Size.zero,
+                                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                  ),
+                                  onPressed: () {
+                                    ref.read(fleetProvider.notifier).clearCardCameraError(p.name);
+                                    _cardCamera?.startStream(contextId: p.contextId);
+                                  },
+                                  child: const Text('Retry', style: TextStyle(fontSize: 9, fontWeight: FontWeight.bold)),
+                                ),
+                              ],
+                            ),
                           ),
                         ),
                       ),
@@ -229,9 +253,9 @@ class _FleetPrinterCardState extends ConsumerState<FleetPrinterCard> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('Nozzle: ${p.nozzleTemp.toStringAsFixed(0)}Â°C',
+                      Text('Nozzle: ${p.nozzleTemp.toStringAsFixed(0)}\u00B0C',
                           style: const TextStyle(fontSize: 10, color: AppColors.toolheadT0)),
-                      Text('Bed: ${p.bedTemp.toStringAsFixed(0)}Â°C',
+                      Text('Bed: ${p.bedTemp.toStringAsFixed(0)}\u00B0C',
                           style: const TextStyle(fontSize: 10, color: AppColors.bedHeat)),
                     ],
                   ),
