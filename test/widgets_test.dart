@@ -6,6 +6,7 @@ import 'package:yourprinter_mobile/services/preferences_service.dart';
 import 'package:yourprinter_mobile/state/auth_provider.dart';
 import 'package:yourprinter_mobile/ui/common/status_badge.dart';
 import 'package:yourprinter_mobile/ui/common/skeleton_shimmer.dart';
+import 'package:yourprinter_mobile/ui/common/connection_error_card.dart';
 import 'package:yourprinter_mobile/ui/dashboard/job_progress_card.dart';
 import 'package:yourprinter_mobile/state/telemetry_provider.dart';
 import 'package:yourprinter_mobile/models/printer_status.dart';
@@ -134,6 +135,42 @@ void main() {
       expect(find.text('gear_bearing_v2.gcode'), findsOneWidget);
       expect(find.text('68.5%'), findsOneWidget);
       expect(find.text('Layer 250 / 365'), findsOneWidget);
+    });
+
+    testWidgets('ConnectionErrorCard displays generic friendly message and expands to show true message', (WidgetTester tester) async {
+      const rawError = 'DioException [connection timeout]: The request connection took longer than 0:00:10.000000 and it was aborted.';
+
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: ConnectionErrorCard(rawError: rawError),
+          ),
+        ),
+      );
+
+      // Verify generic summary is visible
+      expect(find.text('Connection Failed'), findsOneWidget);
+      expect(find.text('Connection timed out. The server took too long to respond.'), findsOneWidget);
+      expect(find.text('View Technical Details'), findsOneWidget);
+
+      // Raw error should NOT be visible initially
+      expect(find.text(rawError), findsNothing);
+
+      // Tap dropdown to expand
+      await tester.tap(find.text('View Technical Details'));
+      await tester.pumpAndSettle();
+
+      // Now true error message should be visible
+      expect(find.text('Hide Technical Details'), findsOneWidget);
+      expect(find.text('RAW ERROR LOG'), findsOneWidget);
+      expect(find.text(rawError), findsOneWidget);
+
+      // Tap to collapse
+      await tester.tap(find.text('Hide Technical Details'));
+      await tester.pumpAndSettle();
+
+      expect(find.text('View Technical Details'), findsOneWidget);
+      expect(find.text(rawError), findsNothing);
     });
   });
 }

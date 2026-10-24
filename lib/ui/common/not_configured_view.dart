@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:lucide_icons_flutter/lucide_icons.dart';
 import '../../core/constants/app_colors.dart';
 import '../../state/connection_provider.dart';
+import 'connection_error_card.dart';
 
 class NotConfiguredView extends ConsumerStatefulWidget {
   final VoidCallback? onOpenSettings;
@@ -220,30 +221,10 @@ class _NotConfiguredViewState extends ConsumerState<NotConfiguredView> {
                         label: Text(isBusy ? 'Testing Connection...' : 'Test Connection & Connect'),
                       ),
 
-                      // Error Banner
+                      // Error Banner with generic message and dropdown for the true message
                       if (displayError != null && displayError.isNotEmpty) ...[
-                        const SizedBox(height: 12),
-                        Container(
-                          padding: const EdgeInsets.all(10),
-                          decoration: BoxDecoration(
-                            color: AppColors.error.withValues(alpha: 0.15),
-                            borderRadius: BorderRadius.circular(8),
-                            border: Border.all(color: AppColors.error.withValues(alpha: 0.4)),
-                          ),
-                          child: Row(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              const Icon(LucideIcons.alertCircle, size: 16, color: AppColors.error),
-                              const SizedBox(width: 8),
-                              Expanded(
-                                child: Text(
-                                  displayError,
-                                  style: const TextStyle(fontSize: 11, color: AppColors.error),
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
+                        const SizedBox(height: 14),
+                        ConnectionErrorCard(rawError: displayError),
                       ],
                     ],
                   ),

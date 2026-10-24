@@ -5,6 +5,7 @@ import '../../core/constants/app_colors.dart';
 import '../../state/auth_provider.dart';
 import '../../state/camera_provider.dart';
 import '../../state/connection_provider.dart';
+import '../common/connection_error_card.dart';
 
 class SettingsScreen extends ConsumerStatefulWidget {
   const SettingsScreen({super.key});
@@ -15,6 +16,7 @@ class SettingsScreen extends ConsumerStatefulWidget {
 
 class _SettingsScreenState extends ConsumerState<SettingsScreen> {
   late TextEditingController _urlController;
+  String? _saveError;
 
   @override
   void initState() {
@@ -72,14 +74,19 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         onPressed: () async {
                           final newUrl = _urlController.text.trim();
                           if (newUrl.isNotEmpty) {
+                            setState(() => _saveError = null);
                             final res = await ref.read(connectionProvider.notifier).testAndSaveServerUrl(newUrl);
                             if (context.mounted) {
-                              ScaffoldMessenger.of(context).showSnackBar(
-                                SnackBar(
-                                  content: Text(res.message),
-                                  backgroundColor: res.success ? AppColors.accentGreen : AppColors.error,
-                                ),
-                              );
+                              if (res.success) {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                    content: Text(res.message),
+                                    backgroundColor: AppColors.accentGreen,
+                                  ),
+                                );
+                              } else {
+                                setState(() => _saveError = res.message);
+                              }
                             }
                           }
                         },
@@ -93,6 +100,10 @@ class _SettingsScreenState extends ConsumerState<SettingsScreen> {
                         ),
                     ],
                   ),
+                  if (_saveError != null && _saveError!.isNotEmpty) ...[
+                    const SizedBox(height: 12),
+                    ConnectionErrorCard(rawError: _saveError!),
+                  ],
                 ],
               ),
             ),
