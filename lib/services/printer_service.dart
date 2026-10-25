@@ -101,6 +101,26 @@ class PrinterService {
     return null;
   }
 
+  Future<bool> loadMaterialSlot(int slotId, {String? contextId}) async {
+    final query = contextId != null ? {'contextId': contextId} : null;
+    final res = await apiClient.post(
+      ApiEndpoints.materialLoad,
+      data: {'slotId': slotId},
+      queryParameters: query,
+    );
+    return (res.data as Map<String, dynamic>)['success'] == true;
+  }
+
+  Future<bool> unloadMaterial({String? contextId}) async {
+    final query = contextId != null ? {'contextId': contextId} : null;
+    final res = await apiClient.post(
+      ApiEndpoints.materialUnload,
+      data: <String, dynamic>{},
+      queryParameters: query,
+    );
+    return (res.data as Map<String, dynamic>)['success'] == true;
+  }
+
   // Job Controls
   Future<bool> pauseJob({String? contextId}) async {
     final query = contextId != null ? {'contextId': contextId} : null;
