@@ -94,21 +94,31 @@ void main() {
       expect(config.concurrencyNotice, contains('only support one active camera stream'));
     });
 
-    test('MaterialStationStatus parses slot colors and active state', () {
+    test('MaterialStationStatus parses slot colors and active state from WebUI schema', () {
       final json = {
         'connected': true,
+        'activeSlot': 2,
+        'overallStatus': 'ready',
         'slots': [
-          {'id': 0, 'type': 'PLA', 'colorHex': '#FF0000', 'remainingPercent': 85.0, 'isActive': true},
-          {'id': 1, 'type': 'PETG', 'colorHex': '#00FF00', 'remainingPercent': 40.0, 'isActive': false},
+          {'slotId': 1, 'materialType': 'PLA', 'materialColor': '#FF0000', 'isEmpty': false},
+          {'slotId': 2, 'materialType': 'PETG', 'materialColor': '#00FF00', 'isEmpty': false},
+          {'slotId': 3, 'materialType': null, 'materialColor': null, 'isEmpty': true},
         ],
       };
 
       final station = MaterialStationStatus.fromJson(json);
 
       expect(station.connected, true);
-      expect(station.slots.length, 2);
-      expect(station.slots[0].isActive, true);
-      expect(station.slots[0].colorHex, '#FF0000');
+      expect(station.activeSlot, 2);
+      expect(station.slots.length, 3);
+      expect(station.slots[0].slotId, 1);
+      expect(station.slots[0].isActive, false);
+      expect(station.slots[0].materialColor, '#FF0000');
+      expect(station.slots[0].materialType, 'PLA');
+      expect(station.slots[1].slotId, 2);
+      expect(station.slots[1].isActive, true);
+      expect(station.slots[1].materialColor, '#00FF00');
+      expect(station.slots[2].isEmpty, true);
     });
 
     test('WebUIJobFile parses metadata and print time', () {
